@@ -1,0 +1,148 @@
+version: "3"
+
+services:
+  wordpress:
+    depends_on:
+      - mariadb
+    build:
+      context: ./wordpress
+    networks:
+      - default
+    image: wordpress
+    container_name: "inception_wordpress"
+    environment:
+      - WP_URL=https://${DOMAIN_NAME}
+      - WP_DATABASE=${WP_DATABASE}
+      - WP_TITLE=${WP_TITLE}
+      - WP_ADMIN_USER=${WP_ADMIN_USER}
+      - WP_ADMIN_PWD=${WP_ADMIN_PWD}
+      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_PORT=${MARIADB_PORT}
+      - PHP_FPM_PORT=${PHP_FPM_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    volumes:
+      - wordpress-volume:/var/www/wordpress
+    restart: unless-stopped
+  
+  # ------------------------------------------------------------------------- #
+
+  mariadb:
+    build:
+      context: ./mariadb
+    networks:
+      - default
+    container_name: "inception_mariadb"
+    image: mariadb
+    environment:
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_PORT=${MARIADB_PORT}
+    volumes:
+      - mariadb-volume:/var/lib/mysql
+    restart: unless-stopped 
+
+  # ------------------------------------------------------------------------- #
+
+  nginx:
+    build:
+      context: ./nginx
+    networks:
+      - default
+    container_name: "inception_nginx"
+    image: nginx
+    ports:
+      - "443:443"
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - CERTS_DIR=${CERTS_DIR}
+      - TLS_VERSION=${TLS_VERSION}
+      - PHP_FPM_HOST=${PHP_FPM_HOST}
+      - PHP_FPM_PORT=${PHP_FPM_PORT}
+      - VIRTUAL_PORT=443
+      - VIRTUAL_HOST=${DOMAIN_NAME}
+    volumes:
+      - wordpress-volume:/var/www/wordpress
+      - certs-volume:${CERTS_DIR}
+    restart: unless-stopped 
+
+  # ------------------------------------------------------------------------- #
+
+  redis:
+    build:
+      context: ./redis
+    container_name: "inception_redis"
+    networks:
+      - default
+    image: redis
+    environment:
+      - REDIS_PORT=${REDIS_PORT}
+    restart: unless-stopped
+  # ------------------------------------------------------------------------- #
+
+  adminer:
+    depends_on:
+      - mariadb
+    build:
+      context: ./adminer
+    container_name: "inception_adminer"
+    networks:
+      - default
+    image: adminer
+    volumes:
+      - certs-volume:${CERTS_DIR}
+    environment:
+      - CERTS_DIR=${CERTS_DIR}
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - ADMINER_PORT=${ADMINER_PORT}
+      - TLS_VERSION=${TLS_VERSION}
+    restart: unless-stopped
+  # ------------------------------------------------------------------------- #
+  
+  portainer:
+    image: portainer/portainer-ce:2.11.1
+    container_name: portainer
+    networks:
+      - default
+    ports:
+    #  - "8000:8000"
+      - "9443:9443"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - certs-volume:/certs
+    command: --admin-password '$$2y$$05$$pZE.iDVLHUOA7iNgJYzoUeRszwwRNZwpN4ZDapH3DU5pwg47PHDei' 
+    environment:
+      - SSLCERT=${CERT_PATH}
+      - SSLKEY=${KEY_PATH}
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------------- #
+
+networks:
+  default:
+    external:
+      name: inception_network
+  # ------------------------------------------------------------------------- #
+volumes:
+  mariadb-volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${MARIADB_HOST_VOLUME_PATH}
+      o: bind
+  wordpress-volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${WP_HOST_VOLUME_PATH}
+      o: bind
+  certs-volume:
+    driver: local
+ 
