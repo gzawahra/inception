@@ -26,20 +26,6 @@ RUN			curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-c
 
 WORKDIR		/var/www/wordpress
 
-ENV			MARIADB_DATABASE="wordpress"			\
-			MARIADB_USER="wordpress"				\
-			MARIADB_PASSWORD="wordpress"			\
-			MARIADB_HOST="mariadb"					\
-			MARIADB_PORT=3306						\
-													\
-			WP_URL="gizawahr.42.fr"					\
-			WP_TITLE="inception"					\
-			WP_ADMIN_USER="gizawahr"				\
-			WP_ADMIN_PWD="badpassword"				\
-			WP_ADMIN_EMAIL="gzawahra@gmail.com"		\
-			REDIS_HOST="redis"						\
-			REDIS_PORT=6379
-
 RUN			wp core download
 
 RUN			adduser -S nginx &&	\

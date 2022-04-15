@@ -1,8 +1,11 @@
 [server]
 [mysqld]
+[mysqld_safe]
+socket = /var/run/mysqld/mysqld.sock
+nice = 0
 [galera]
 port = 3306
-bind-address=localhost
+bind-address=0.0.0.0
 [embedded]
 [mariadb]
 general_log

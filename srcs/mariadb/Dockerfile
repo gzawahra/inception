@@ -16,7 +16,7 @@ RUN			mariadb-install-db --user=mysql --datadir='/var/lib/mysql'
 ENV			MARIADB_USER=mariadb_user			\
 			MARIADB_PASSWORD=mariadb_password	\
 			MARIADB_DATABASE=mariadb_database	\
-			MARIADB_PORT=3306
+			MARIADB_PORT=mariadb_port
 
 COPY		./config/mariadb-server.cnf  /etc/my.cnf.d/mariadb-server.cnf
 RUN			chown -R mysql:mysql /etc/my.cnf.d

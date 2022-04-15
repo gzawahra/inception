@@ -11,6 +11,7 @@ services:
     image: wordpress
     container_name: "inception_wordpress"
     environment:
+      - TZ=Europe/Paris
       - WP_URL=https://${DOMAIN_NAME}
       - WP_DATABASE=${WP_DATABASE}
       - WP_TITLE=${WP_TITLE}
@@ -20,6 +21,7 @@ services:
       - MARIADB_USER=${MARIADB_USER}
       - MARIADB_PASSWORD=${MARIADB_PASSWORD}
       - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_HOST=${MARIADB_HOST}
       - MARIADB_PORT=${MARIADB_PORT}
       - PHP_FPM_PORT=${PHP_FPM_PORT}
       - REDIS_HOST=${REDIS_HOST}
@@ -27,7 +29,7 @@ services:
     volumes:
       - wordpress-volume:/var/www/wordpress
     restart: unless-stopped
-  
+
   # ------------------------------------------------------------------------- #
 
   mariadb:
@@ -38,6 +40,7 @@ services:
     container_name: "inception_mariadb"
     image: mariadb
     environment:
+      - TZ=Europe/Paris
       - MARIADB_USER=${MARIADB_USER}
       - MARIADB_PASSWORD=${MARIADB_PASSWORD}
       - MARIADB_DATABASE=${MARIADB_DATABASE}
@@ -58,6 +61,7 @@ services:
     ports:
       - "443:443"
     environment:
+      - TZ=Europe/Paris
       - DOMAIN_NAME=${DOMAIN_NAME}
       - CERTS_DIR=${CERTS_DIR}
       - TLS_VERSION=${TLS_VERSION}
@@ -80,6 +84,7 @@ services:
       - default
     image: redis
     environment:
+      - TZ=Europe/Paris
       - REDIS_PORT=${REDIS_PORT}
     restart: unless-stopped
   # ------------------------------------------------------------------------- #
@@ -96,10 +101,13 @@ services:
     volumes:
       - certs-volume:${CERTS_DIR}
     environment:
+      - TZ=Europe/Paris
       - CERTS_DIR=${CERTS_DIR}
       - DOMAIN_NAME=${DOMAIN_NAME}
       - ADMINER_PORT=${ADMINER_PORT}
       - TLS_VERSION=${TLS_VERSION}
+      - ADMINER_DEFAULT_DB_HOST= mariadb
+      - ADMINER_DEFAULT_DB_NAME= ${MARIADB_DATABASE}
     restart: unless-stopped
   # ------------------------------------------------------------------------- #
   
@@ -109,7 +117,6 @@ services:
     networks:
       - default
     ports:
-    #  - "8000:8000"
       - "9443:9443"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
@@ -117,6 +124,7 @@ services:
       - certs-volume:/certs
     command: --admin-password '$$2y$$05$$pZE.iDVLHUOA7iNgJYzoUeRszwwRNZwpN4ZDapH3DU5pwg47PHDei' 
     environment:
+      - TZ=Europe/Paris
       - SSLCERT=${CERT_PATH}
       - SSLKEY=${KEY_PATH}
     security_opt:

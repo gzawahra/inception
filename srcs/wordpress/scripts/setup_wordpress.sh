@@ -30,7 +30,8 @@ function wait_for_redis()
 
 set -e
 
-while ! mariadb -h$MARIADB_HOST -P${MARIADB_PORT} -u$MARIADB_USER -p$MARIADB_PASSWORD; do echo "waiting for db ..."; done
+#while ! mariadb -h$MARIADB_HOST -P${MARIADB_PORT} -u$MARIADB_USER -p$MARIADB_PASSWORD; do echo "waiting for db ..."; done
+wait_for_db;
 wp core install --url="gizawahr.42.fr" --title="Wordpress" --admin_user="gizawahr" --admin_password="badpassword" --admin_email="gzawahra@gmail.com" --skip-email
 wp plugin install hello-dolly --activate
 wp theme install twentytwenty --activate
