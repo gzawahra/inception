@@ -1,6 +1,6 @@
 version: "3"
-
 services:
+
   wordpress:
     depends_on:
       - mariadb

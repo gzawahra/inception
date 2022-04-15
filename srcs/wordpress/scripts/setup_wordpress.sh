@@ -2,7 +2,7 @@
 function wait_for_db()
 {
 	i=1
-	while ! mariadb -h$MARIADB_HOST -P${MARIADB_PORT} -u$MARIADB_USER -p$MARIADB_PASSWORD; do
+	while ! mariadb -h${MARIADB_HOST} -P${MARIADB_PORT} -u${MARIADB_USER} -p${MARIADB_PASSWORD}; do
 		if [ $i -ge 60 ]; then
 			printf "Failed to connect to mariadb\n"
 			exit 1

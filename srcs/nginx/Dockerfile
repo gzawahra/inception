@@ -1,7 +1,5 @@
 FROM		alpine:3.12
 
-LABEL		maintainer="gizawahr@student.42.fr"
-
 RUN			apk update && apk upgrade && apk add --no-cache	\
 											openssl			\
 											nginx			\

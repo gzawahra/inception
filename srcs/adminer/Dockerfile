@@ -11,6 +11,7 @@ RUN			wget -O /tmp/adminer.php https://github.com/vrana/adminer/releases/downloa
 			mkdir -p /var/www/adminer &&	\
 			mv /tmp/adminer.php /var/www/adminer/index.php
 
+COPY		 ./config/adminer.css /var/www/adminer/adminer.css
 # php-fpm setup
 
 COPY		./config/php-fpm.conf /etc/php7/php-fpm.conf

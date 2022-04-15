@@ -1,7 +1,5 @@
 FROM	 	alpine:3.12
 
-LABEL		maintainer="gizawahr@student.42.fr"
-
 RUN			apk update && apk upgrade && apk add --no-cache	\
 											mariadb			\
 											mariadb-client	\
@@ -12,11 +10,6 @@ RUN			apk update && apk upgrade && apk add --no-cache	\
 RUN			mkdir -p /run/mysqld && mkdir -p /var/lib/mysql
 RUN			chown -R mysql:mysql /run/mysqld && chown mysql:mysql /var/lib/mysql
 RUN			mariadb-install-db --user=mysql --datadir='/var/lib/mysql'
-
-ENV			MARIADB_USER=mariadb_user			\
-			MARIADB_PASSWORD=mariadb_password	\
-			MARIADB_DATABASE=mariadb_database	\
-			MARIADB_PORT=mariadb_port
 
 COPY		./config/mariadb-server.cnf  /etc/my.cnf.d/mariadb-server.cnf
 RUN			chown -R mysql:mysql /etc/my.cnf.d

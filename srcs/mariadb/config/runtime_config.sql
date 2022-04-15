@@ -1,7 +1,7 @@
 DELETE FROM	mysql.user WHERE User='';
 DROP DATABASE test;
 DELETE FROM mysql.db WHERE Db='test';
-DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('gizawahr.42.fr', '127.0.0.1', '::1');
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('${DOMAIN_NAME}', '127.0.0.1', '::1');
 CREATE DATABASE ${MARIADB_DATABASE} CHARACTER SET utf8 COLLATE utf8_general_ci;
 CREATE USER '${MARIADB_USER}'@'%' IDENTIFIED by '${MARIADB_PASSWORD}';
 GRANT ALL PRIVILEGES ON "${MARIADB_DATABASE}.*" TO "${MARIADB_USER}"@'%';
