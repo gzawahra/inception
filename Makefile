@@ -1,14 +1,3 @@
-# *******************************    POST-IT    ****************************** #
-#                                                                              #
-#			## $@ 	Le nom de la cible										   #
-#			## $< 	Le nom de la première dépendance						   #
-#			## $^ 	La liste des dépendances								   #
-#			## $? 	La liste des dépendances plus récentes que la cible		   #
-#			## $* 	Le nom du fichier sans suffixe							   #
-#                                                                              #
-# **************************************************************************** #
-
-#!make
 include srcs/.env 
 
 NAME		=	inception
@@ -30,13 +19,17 @@ all:	fclean .up
 .up:
 	$(MAKE_DIR) $(WP_HOST_VOLUME_PATH)
 	$(MAKE_DIR) $(MARIADB_HOST_VOLUME_PATH)
+	$(MAKE_DIR) $(CERTS_VOLUME_PATH)
 	$(CHOWN) $(DATA_VOLUME_PATH)
 	$(CHMOD) $(DATA_VOLUME_PATH)
-	$(SUDO) docker network create inception_network
+	$(SUDO)	docker network inspect inception_network >/dev/null 2>&1 || \
+   	 docker network create inception_network
 	$(COMPOSE) up -d --build
 
 clean:
 	$(COMPOSE) stop
+	docker system prune --volumes --force --all
+	docker image prune --all --force
 
 fclean:	clean
 	$(COMPOSE) down -v
@@ -44,8 +37,6 @@ fclean:	clean
 re:		prune all
 
 prune:	fclean
-	docker system prune --volumes --force --all
-	docker image prune --all --force
 	if $(SUDO) $(RM) $(DATA_VOLUME_PATH); then echo "No data folder to remove"; fi
 
 .PHONY: all build .up clean fclean re prune

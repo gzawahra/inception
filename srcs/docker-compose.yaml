@@ -13,11 +13,15 @@ services:
     environment:
       - TZ=Europe/Paris
       - WP_URL=https://${DOMAIN_NAME}
+      - WP_HOME=https://${DOMAIN_NAME}
       - WP_DATABASE=${WP_DATABASE}
       - WP_TITLE=${WP_TITLE}
       - WP_ADMIN_USER=${WP_ADMIN_USER}
       - WP_ADMIN_PWD=${WP_ADMIN_PWD}
       - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
+      - WP_USER=${WP_USER}
+      - WP_USER_PWD=${WP_USER_PWD}
+      - WP_USER_EMAIL=${WP_USER_EMAIL}
       - MARIADB_USER=${MARIADB_USER}
       - MARIADB_PASSWORD=${MARIADB_PASSWORD}
       - MARIADB_DATABASE=${MARIADB_DATABASE}
@@ -87,6 +91,7 @@ services:
       - TZ=Europe/Paris
       - REDIS_PORT=${REDIS_PORT}
     restart: unless-stopped
+
   # ------------------------------------------------------------------------- #
 
   adminer:
@@ -109,10 +114,12 @@ services:
       - ADMINER_DEFAULT_DB_HOST= mariadb
       - ADMINER_DEFAULT_DB_NAME= ${MARIADB_DATABASE}
     restart: unless-stopped
+
   # ------------------------------------------------------------------------- #
+
   ftp-server:
     build: ./ftp-server
-    container_name: ftp-server
+    container_name: "inception_ftp"
     ports:
       - "21:21"
       - "21100-21110:21100-21110"
@@ -120,11 +127,13 @@ services:
       - wordpress-volume:/var/www/html/
     networks:
       - default
-    restart: always
     environment:
       FTP_USR: ${FTP_USR}
       FTP_PWD: ${FTP_PWD}
+    restart: unless-stopped
+  
   # ------------------------------------------------------------------------- #
+
   portainer:
     image: portainer/portainer-ce:2.11.1
     container_name: portainer
@@ -151,7 +160,9 @@ networks:
   default:
     external:
       name: inception_network
+
   # ------------------------------------------------------------------------- #
+
 volumes:
   mariadb-volume:
     driver: local
@@ -168,3 +179,4 @@ volumes:
   certs-volume:
     driver: local
  
+  # ------------------------------------------------------------------------- #

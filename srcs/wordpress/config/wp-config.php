@@ -35,6 +35,13 @@ define('SECURE_AUTH_SALT',	'put your unique phrase here');
 define('LOGGED_IN_SALT',	'put your unique phrase here');
 define('NONCE_SALT',		'put your unique phrase here');
 
+define('WP_SITEURL', 'https://' . getenv('DOMAIN_NAME'));
+define('DOMAIN_CURRENT_SITE', 'https://' . getenv('DOMAIN_NAME'));
+define('PATH_CURRENT_SITE', '/');
+define('SITE_ID_CURRENT_SITE', 1);
+define('BLOG_ID_CURRENT_SITE', 2);
+define( 'NOBLOGREDIRECT', 'https://' . getenv('DOMAIN_NAME'));
+
 $table_prefix = 'wp_';
 
 if ( ! defined( 'ABSPATH' ) ) {

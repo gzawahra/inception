@@ -14,7 +14,6 @@ function wait_for_db()
 
 	printf "Connection to mariadb established.\n"
 }
-
 function wait_for_redis()
 {
 	i=1;
@@ -30,16 +29,20 @@ function wait_for_redis()
 
 set -e
 
-#while ! mariadb -h$MARIADB_HOST -P${MARIADB_PORT} -u$MARIADB_USER -p$MARIADB_PASSWORD; do echo "waiting for db ..."; done
 wait_for_db;
-wp core install --url="gizawahr.42.fr" --title="Wordpress" --admin_user="gizawahr" --admin_password="badpassword" --admin_email="gzawahra@gmail.com" --skip-email
-wp user create testuser test@user.com --role=author --user_pass=userpassword
-wp post create --post_title="Wordpress" --post_content="Welcome to wordpress" --post_status=publish --post_author="gizawahr"
+printf "hello, \n"
+wp core install --url=${DOMAIN_NAME} --title=${WP_TITLE} --admin_user=${WP_ADMIN_USER} --admin_password=${WP_ADMIN_PWD} --admin_email=${WP_ADMIN_EMAIL} --skip-email
+wp post create --post_title=${WP_TITLE} --post_content="Welcome to  inception wordpress" --post_status=publish --post_author=${WP_ADMIN_USER}
 wp plugin install hello-dolly --activate
-wp theme install twentytwenty --activate
+wp theme install hestia --activate
 wp plugin install redis-cache --activate
 wp plugin update --all
 wait_for_redis && wp redis enable
 wp plugin update --all
-
+wp user create ${WP_USER} ${WP_USER_EMAIL} --role=author --user_pass=${WP_USER_PWD}
+wp menu create "Mainmenu"
+wp menu item add-custom Mainmenu 42intra https://intra.42.fr --porcelain
+wp menu item add-custom Mainmenu login https://gizawahr.42.fr/wp-admin --porcelain
+wp menu location assign Mainmenu primary
+printf "DONE..... \n"
 php-fpm7 -F -R
