@@ -33,13 +33,13 @@ set -e
 #while ! mariadb -h$MARIADB_HOST -P${MARIADB_PORT} -u$MARIADB_USER -p$MARIADB_PASSWORD; do echo "waiting for db ..."; done
 wait_for_db;
 wp core install --url="gizawahr.42.fr" --title="Wordpress" --admin_user="gizawahr" --admin_password="badpassword" --admin_email="gzawahra@gmail.com" --skip-email
+wp user create testuser test@user.com --role=author --user_pass=userpassword
+wp post create --post_title="Wordpress" --post_content="Welcome to wordpress" --post_status=publish --post_author="gizawahr"
 wp plugin install hello-dolly --activate
 wp theme install twentytwenty --activate
 wp plugin install redis-cache --activate
 wp plugin update --all
 wait_for_redis && wp redis enable
 wp plugin update --all
-wp user create testuser test@user.com --role=author --user_pass=userpassword
-wp post create --post_title="Wordpress" --post_content="Welcome to wordpress" --post_status=publish --post_author="gizawahr"
 
 php-fpm7 -F -R

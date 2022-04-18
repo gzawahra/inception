@@ -110,7 +110,21 @@ services:
       - ADMINER_DEFAULT_DB_NAME= ${MARIADB_DATABASE}
     restart: unless-stopped
   # ------------------------------------------------------------------------- #
-  
+  ftp-server:
+    build: ./ftp-server
+    container_name: ftp-server
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
+    volumes:
+      - wordpress-volume:/var/www/html/
+    networks:
+      - default
+    restart: always
+    environment:
+      FTP_USR: ${FTP_USR}
+      FTP_PWD: ${FTP_PWD}
+  # ------------------------------------------------------------------------- #
   portainer:
     image: portainer/portainer-ce:2.11.1
     container_name: portainer
