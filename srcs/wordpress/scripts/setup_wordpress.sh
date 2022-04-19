@@ -32,6 +32,7 @@ set -e
 wait_for_db;
 printf "hello, \n"
 wp core install --url=${DOMAIN_NAME} --title=${WP_TITLE} --admin_user=${WP_ADMIN_USER} --admin_password=${WP_ADMIN_PWD} --admin_email=${WP_ADMIN_EMAIL} --skip-email
+wp option update blogdescription ${WP_TAGLINE}
 wp post create --post_title=${WP_TITLE} --post_content="Welcome to  inception wordpress" --post_status=publish --post_author=${WP_ADMIN_USER}
 wp plugin install hello-dolly --activate
 wp theme install hestia --activate
@@ -44,5 +45,6 @@ wp menu create "Mainmenu"
 wp menu item add-custom Mainmenu 42intra https://intra.42.fr --porcelain
 wp menu item add-custom Mainmenu login https://gizawahr.42.fr/wp-admin --porcelain
 wp menu location assign Mainmenu primary
+wp eval "echo wp_hash_password('superpassword');"
 printf "DONE..... \n"
 php-fpm7 -F -R

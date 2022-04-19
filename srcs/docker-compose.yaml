@@ -16,6 +16,7 @@ services:
       - WP_HOME=https://${DOMAIN_NAME}
       - WP_DATABASE=${WP_DATABASE}
       - WP_TITLE=${WP_TITLE}
+      - WP_TAGLINE=${WP_TAGLINE}
       - WP_ADMIN_USER=${WP_ADMIN_USER}
       - WP_ADMIN_PWD=${WP_ADMIN_PWD}
       - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
@@ -178,5 +179,7 @@ volumes:
       o: bind
   certs-volume:
     driver: local
- 
+    driver_opts:
+      type: none
+      device: ${CERT_VOLUME_PATH}
   # ------------------------------------------------------------------------- #
